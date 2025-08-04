@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#8b5cf6">
+    <title>Brain Games Hub - Complete Cognitive Training Platform</title>
+    <meta name="description" content="Complete offline brain training platform with 10+ cognitive games including IQ challenges, memory games, Sudoku, Tetris, Snake, and more. Works offline!">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Brain Games Hub">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .game-card.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffd700;
+        }
+
+        .game-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .game-description {
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .game-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 400px;
+            display: none;
+        }
+
+        .game-area.active {
+            display: block;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .game-board {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .memory-card:hover {
+            transform: scale(1.05);
+        }
+
+        .memory-card.flipped {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        .tetris-board {
+            display: grid;
+            grid-template-columns: repeat(10, 30px);
+            grid-template-rows: repeat(20, 30px);
+            gap: 1px;
+            background: #000;
+            margin: 0 auto;
+            border: 2px solid #fff;
+        }
+
+        .tetris-cell {
+            background: #111;
+            border: 1px solid #333;
+        }
+
+        .tetris-cell.filled {
+            background: #667eea;
+        }
+
+        .snake-board {
+            display: grid;
+            grid-template-columns: repeat(20, 20px);
+            grid-template-rows: repeat(20, 20px);
+            gap: 1px;
+            background: #000;
+            margin: 0 auto;
+            border: 2px solid #fff;
+        }
+
+        .snake-cell {
+            background: #111;
+        }
+
+        .snake-cell.snake {
+            background: #00ff00;
+        }
+
+        .snake-cell.food {
+            background: #ff0000;
+            border-radius: 50%;
+        }
+
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 40px);
+            grid-template-rows: repeat(9, 40px);
+            gap: 1px;
+            margin: 0 auto;
+            border: 3px solid #fff;
+        }
+
+        .sudoku-cell {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .sudoku-cell input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .game-2048 {
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            grid-template-rows: repeat(4, 80px);
+            gap: 10px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .tile-2048 {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: all 0.15s ease;
+        }
+
+        .minesweeper-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 30px);
+            grid-template-rows: repeat(10, 30px);
+            gap: 1px;
+            margin: 0 auto;
+            background: #000;
+        }
+
+        .mine-cell {
+            background: #ccc;
+            border: 2px outset #ccc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .mine-cell.revealed {
+            background: #eee;
+            border: 1px solid #999;
+        }
+
+        .mine-cell.flagged {
+            background: #ff0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-card {
+                padding: 20px;
+            }
+            
+            .stats {
+                flex-direction: column;
+            }
+            
+            .memory-grid {
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Brain Games Hub</h1>
+            <p>Complete Cognitive Training Platform - 10+ Games</p>
+        </div>
+
+        <div class="games-grid">
+            <div class="game-card" onclick="selectGame('memory')">
+                <div class="game-title">🧩 Memory Master</div>
+                <div class="game-description">Test your memory with card matching challenges</div>
+            </div>
+            
+            <div class="game-card" onclick="selectGame('iq')">
+                <div class="game-title">🎯 IQ Challenge</div>
+                <div class="game-description">Progressive pattern recognition and logic puzzles</div>
+            </div>
+            
+            <div class="game-card" onclick="selectGame('reflex')">
+                <div class="game-title">⚡ Lightning Reflex</div>
+                <div class="game-description">Test your reaction time and speed</div>
+            </div>
+            
+            <div class="game-card" onclick="selectGame('math')">
+                <div class="game-title">🔢 Math Wizard</div>
+                <div class="game-description">Quick arithmetic and number challenges</div>
+            </div>
+            
+            <div class="game-card" onclick="selectGame('tetris')">
+                <div class="game-title">🎮 Tetris</div>
+                <div class="game-description">Classic block-stacking puzzle game</div>
+            </div>
+            
+            <div class="game-card" onclick="selectGame('snake')">
+                <div class="game-title">🐍 Snake</div>
+                <div class="game-description">Guide the snake to collect food and grow</div>
+            </div>
+            
+            <div class="game-card" onclick="selectGame('sudoku')">
+                <div class="game-title">📋 Sudoku</div>
+                <div class="game-description">Number placement logic puzzle</div>
+            </div>
+            
+            <div class="game-card" onclick="selectGame('2048')">
+                <div class="game-title">🎲 2048</div>
+                <div class="game-description">Combine tiles to reach 2048</div>
+            </div>
+            
+            <div class="game-card" onclick="selectGame('minesweeper')">
+                <div class="game-title">💣 Minesweeper</div>
+                <div class="game-description">Clear the field without hitting mines</div>
+            </div>
+            
+            <div class="game-card" onclick="selectGame('pattern')">
+                <div class="game-title">🔄 Pattern Puzzle</div>
+                <div class="game-description">Recognize and complete visual patterns</div>
+            </div>
+        </div>
+
+        <div id="game-area" class="game-area">
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="score">0</div>
+                    <div class="stat-label">Score</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="level">1</div>
+                    <div class="stat-label">Level</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="time">0</div>
+                    <div class="stat-label">Time</div>
+                </div>
+            </div>
+            
+            <div class="game-controls">
+                <button class="btn" onclick="startGame()">Start Game</button>
+                <button class="btn" onclick="pauseGame()">Pause</button>
+                <button class="btn" onclick="resetGame()">Reset</button>
+            </div>
+            
+            <div id="game-board" class="game-board">
+                <p>Select a game to start playing!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentGame = null;
+        let gameState = {
+            score: 0,
+            level: 1,
+            time: 0,
+            isPlaying: false,
+            isPaused: false
+        };
+        
+        let gameTimer = null;
+        let gameData = {};
+
+        function selectGame(gameName) {
+            // Remove active class from all cards
+            document.querySelectorAll('.game-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Add active class to selected card
+            event.target.closest('.game-card').classList.add('active');
+            
+            currentGame = gameName;
+            document.getElementById('game-area').classList.add('active');
+            
+            // Reset game state
+            resetGame();
+            
+            // Initialize specific game
+            initializeGame(gameName);
+        }
+
+        function initializeGame(gameName) {
+            const gameBoard = document.getElementById('game-board');
+            
+            switch(gameName) {
+                case 'memory':
+                    initMemoryGame();
+                    break;
+                case 'iq':
+                    initIQGame();
+                    break;
+                case 'reflex':
+                    initReflexGame();
+                    break;
+                case 'math':
+                    initMathGame();
+                    break;
+                case 'tetris':
+                    initTetrisGame();
+                    break;
+                case 'snake':
+                    initSnakeGame();
+                    break;
+                case 'sudoku':
+                    initSudokuGame();
+                    break;
+                case '2048':
+                    init2048Game();
+                    break;
+                case 'minesweeper':
+                    initMinesweeperGame();
+                    break;
+                case 'pattern':
+                    initPatternGame();
+                    break;
+                default:
+                    gameBoard.innerHTML = '<p>Game not implemented yet!</p>';
+            }
+        }
+
+        function initMemoryGame() {
+            const gameBoard = document.getElementById('game-board');
+            const cards = ['🎈', '🎮', '🎯', '🎲', '🎪', '🎨', '🎭', '🎸'];
+            const gameCards = [...cards, ...cards].sort(() => Math.random() - 0.5);
+            
+            gameData.flippedCards = [];
+            gameData.matchedPairs = 0;
+            
+            gameBoard.innerHTML = `
+                <div class="memory-grid">
+                    ${gameCards.map((card, index) => `
+                        <div class="memory-card" data-card="${card}" data-index="${index}" onclick="flipCard(${index})">
+                            ?
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function flipCard(index) {
+            if (!gameState.isPlaying || gameData.flippedCards.length >= 2) return;
+            
+            const card = document.querySelector(`[data-index="${index}"]`);
+            if (card.classList.contains('flipped')) return;
+            
+            card.classList.add('flipped');
+            card.textContent = card.dataset.card;
+            gameData.flippedCards.push({index, card: card.dataset.card});
+            
+            if (gameData.flippedCards.length === 2) {
+                setTimeout(checkMatch, 1000);
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = gameData.flippedCards;
+            
+            if (card1.card === card2.card) {
+                gameData.matchedPairs++;
+                gameState.score += 100;
+                updateStats();
+                
+                if (gameData.matchedPairs === 8) {
+                    alert('Congratulations! You won!');
+                    gameState.isPlaying = false;
+                }
+            } else {
+                const cardEl1 = document.querySelector(`[data-index="${card1.index}"]`);
+                const cardEl2 = document.querySelector(`[data-index="${card2.index}"]`);
+                
+                cardEl1.classList.remove('flipped');
+                cardEl2.classList.remove('flipped');
+                cardEl1.textContent = '?';
+                cardEl2.textContent = '?';
+            }
+            
+            gameData.flippedCards = [];
+        }
+
+        function initIQGame() {
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Pattern Recognition Challenge</h3>
+                    <p>Find the missing pattern in the sequence:</p>
+                    <div style="font-size: 3rem; margin: 20px 0;">
+                        🔴 🔵 🔴 🔵 ?
+                    </div>
+                    <div class="game-controls">
+                        <button class="btn" onclick="selectPattern('🔴')">🔴</button>
+                        <button class="btn" onclick="selectPattern('🔵')">🔵</button>
+                        <button class="btn" onclick="selectPattern('🟡')">🟡</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectPattern(pattern) {
+            if (pattern === '🔴') {
+                gameState.score += 50;
+                alert('Correct! Well done!');
+                generateNewPattern();
+            } else {
+                alert('Try again!');
+            }
+            updateStats();
+        }
+
+        function generateNewPattern() {
+            // Generate a new pattern challenge
+            const patterns = [
+                ['🔴', '🔵', '🔴', '🔵', '🔴'],
+                ['🟡', '🟢', '🟡', '🟢', '🟡'],
+                ['🔵', '🔵', '🔴', '🔴', '🔵']
+            ];
+            
+            const randomPattern = patterns[Math.floor(Math.random() * patterns.length)];
+            const gameBoard = document.getElementById('game-board');
+            
+            gameBoard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Pattern Recognition Challenge</h3>
+                    <p>Find the missing pattern in the sequence:</p>
+                    <div style="font-size: 3rem; margin: 20px 0;">
+                        ${randomPattern.slice(0, 4).join(' ')} ?
+                    </div>
+                    <div class="game-controls">
+                        <button class="btn" onclick="selectPattern('🔴')">🔴</button>
+                        <button class="btn" onclick="selectPattern('🔵')">🔵</button>
+                        <button class="btn" onclick="selectPattern('🟡')">🟡</button>
+                        <button class="btn" onclick="selectPattern('🟢')">🟢</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function initReflexGame() {
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Lightning Reflex Test</h3>
+                    <p>Click the button as soon as it turns green!</p>
+                    <div style="margin: 40px 0;">
+                        <button id="reflex-btn" class="btn" style="width: 200px; height: 200px; font-size: 2rem; background: red;" onclick="reflexClick()">
+                            Wait...
+                        </button>
+                    </div>
+                    <p id="reflex-result">Click Start Game to begin!</p>
+                </div>
+            `;
+        }
+
+        function startReflexTest() {
+            const btn = document.getElementById('reflex-btn');
+            const result = document.getElementById('reflex-result');
+            
+            btn.style.background = 'red';
+            btn.textContent = 'Wait...';
+            result.textContent = 'Wait for green...';
+            
+            gameData.reflexStart = null;
+            gameData.canClick = false;
+            
+            const delay = Math.random() * 3000 + 2000; // 2-5 seconds
+            
+            setTimeout(() => {
+                btn.style.background = 'green';
+                btn.textContent = 'CLICK!';
+                gameData.reflexStart = Date.now();
+                gameData.canClick = true;
+            }, delay);
+        }
+
+        function reflexClick() {
+            if (!gameData.canClick) {
+                document.getElementById('reflex-result').textContent = 'Too early! Wait for green.';
+                return;
+            }
+            
+            const reactionTime = Date.now() - gameData.reflexStart;
+            document.getElementById('reflex-result').textContent = `Reaction time: ${reactionTime}ms`;
+            
+            if (reactionTime < 300) {
+                gameState.score += 100;
+            } else if (reactionTime < 500) {
+                gameState.score += 50;
+            } else {
+                gameState.score += 10;
+            }
+            
+            updateStats();
+            setTimeout(startReflexTest, 2000);
+        }
+
+        function initMathGame() {
+            const gameBoard = document.getElementById('game-board');
+            generateMathProblem();
+        }
+
+        function generateMathProblem() {
+            const a = Math.floor(Math.random() * 50) + 1;
+            const b = Math.floor(Math.random() * 50) + 1;
+            const operations = ['+', '-', '*'];
+            const op = operations[Math.floor(Math.random() * operations.length)];
+            
+            let answer;
+            switch(op) {
+                case '+': answer = a + b; break;
+                case '-': answer = a - b; break;
+                case '*': answer = a * b; break;
+            }
+            
+            gameData.correctAnswer = answer;
+            
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Math Challenge</h3>
+                    <div style="font-size: 3rem; margin: 20px 0;">
+                        ${a} ${op} ${b} = ?
+                    </div>
+                    <input type="number" id="math-input" style="padding: 10px; font-size: 1.5rem; text-align: center; margin: 10px;">
+                    <br><br>
+                    <button class="btn" onclick="checkMathAnswer()">Submit Answer</button>
+                </div>
+            `;
+            
+            document.getElementById('math-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkMathAnswer();
+                }
+            });
+        }
+
+        function checkMathAnswer() {
+            const userAnswer = parseInt(document.getElementById('math-input').value);
+            
+            if (userAnswer === gameData.correctAnswer) {
+                gameState.score += 25;
+                alert('Correct!');
+            } else {
+                alert(`Wrong! The correct answer was ${gameData.correctAnswer}`);
+            }
+            
+            updateStats();
+            setTimeout(generateMathProblem, 1000);
+        }
+
+        function initTetrisGame() {
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Tetris</h3>
+                    <p>Use arrow keys to move and rotate pieces</p>
+                    <div class="tetris-board" id="tetris-board"></div>
+                </div>
+            `;
+            
+            // Create tetris grid
+            const board = document.getElementById('tetris-board');
+            for (let i = 0; i < 200; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'tetris-cell';
+                board.appendChild(cell);
+            }
+        }
+
+        function initSnakeGame() {
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Snake Game</h3>
+                    <p>Use arrow keys to control the snake</p>
+                    <div class="snake-board" id="snake-board"></div>
+                </div>
+            `;
+            
+            // Create snake grid
+            const board = document.getElementById('snake-board');
+            gameData.snake = [{x: 10, y: 10}];
+            gameData.food = {x: 15, y: 15};
+            gameData.direction = {x: 0, y: 0};
+            
+            for (let i = 0; i < 400; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'snake-cell';
+                board.appendChild(cell);
+            }
+            
+            updateSnakeBoard();
+        }
+
+        function updateSnakeBoard() {
+            const cells = document.querySelectorAll('.snake-cell');
+            cells.forEach(cell => {
+                cell.className = 'snake-cell';
+            });
+            
+            // Draw snake
+            gameData.snake.forEach(segment => {
+                const index = segment.y * 20 + segment.x;
+                if (cells[index]) {
+                    cells[index].classList.add('snake');
+                }
+            });
+            
+            // Draw food
+            const foodIndex = gameData.food.y * 20 + gameData.food.x;
+            if (cells[foodIndex]) {
+                cells[foodIndex].classList.add('food');
+            }
+        }
+
+        function initSudokuGame() {
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Sudoku</h3>
+                    <p>Fill in the numbers 1-9</p>
+                    <div class="sudoku-grid" id="sudoku-grid"></div>
+                </div>
+            `;
+            
+            // Create sudoku grid
+            const grid = document.getElementById('sudoku-grid');
+            for (let i = 0; i < 81; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'sudoku-cell';
+                cell.innerHTML = '<input type="number" min="1" max="9">';
+                grid.appendChild(cell);
+            }
+        }
+
+        function init2048Game() {
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>2048</h3>
+                    <p>Use arrow keys to combine tiles</p>
+                    <div class="game-2048" id="game-2048"></div>
+                </div>
+            `;
+            
+            // Create 2048 grid
+            const grid = document.getElementById('game-2048');
+            gameData.tiles = Array(16).fill(0);
+            
+            for (let i = 0; i < 16; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'tile-2048';
+                grid.appendChild(tile);
+            }
+            
+            // Add initial tiles
+            addRandomTile();
+            addRandomTile();
+            update2048Board();
+        }
+
+        function addRandomTile() {
+            const emptyCells = gameData.tiles.map((val, i) => val === 0 ? i : null).filter(v => v !== null);
+            if (emptyCells.length > 0) {
+                const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                gameData.tiles[randomCell] = Math.random() < 0.9 ? 2 : 4;
+            }
+        }
+
+        function update2048Board() {
+            const tiles = document.querySelectorAll('.tile-2048');
+            tiles.forEach((tile, i) => {
+                tile.textContent = gameData.tiles[i] || '';
+                tile.style.background = gameData.tiles[i] ? 
+                    `hsl(${Math.log2(gameData.tiles[i]) * 30}, 50%, 60%)` : 
+                    'rgba(255, 255, 255, 0.1)';
+            });
+        }
+
+        function initMinesweeperGame() {
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Minesweeper</h3>
+                    <p>Left click to reveal, right click to flag</p>
+                    <div class="minesweeper-grid" id="minesweeper-grid"></div>
+                </div>
+            `;
+            
+            // Create minesweeper grid
+            const grid = document.getElementById('minesweeper-grid');
+            gameData.mines = Array(100).fill(false);
+            gameData.revealed = Array(100).fill(false);
+            gameData.flagged = Array(100).fill(false);
+            
+            // Place 10 random mines
+            for (let i = 0; i < 10; i++) {
+                let pos;
+                do {
+                    pos = Math.floor(Math.random() * 100);
+                } while (gameData.mines[pos]);
+                gameData.mines[pos] = true;
+            }
+            
+            for (let i = 0; i < 100; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'mine-cell';
+                cell.addEventListener('click', () => revealCell(i));
+                cell.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    flagCell(i);
+                });
+                grid.appendChild(cell);
+            }
+        }
+
+        function revealCell(index) {
+            if (gameData.revealed[index] || gameData.flagged[index]) return;
+            
+            gameData.revealed[index] = true;
+            const cell = document.querySelectorAll('.mine-cell')[index];
+            cell.classList.add('revealed');
+            
+            if (gameData.mines[index]) {
+                cell.textContent = '💣';
+                cell.style.background = 'red';
+                alert('Game Over! You hit a mine!');
+            } else {
+                const count = countAdjacentMines(index);
+                cell.textContent = count || '';
+                gameState.score += 10;
+                updateStats();
+            }
+        }
+
+        function flagCell(index) {
+            if (gameData.revealed[index]) return;
+            
+            gameData.flagged[index] = !gameData.flagged[index];
+            const cell = document.querySelectorAll('.mine-cell')[index];
+            cell.classList.toggle('flagged');
+            cell.textContent = gameData.flagged[index] ? '🚩' : '';
+        }
+
+        function countAdjacentMines(index) {
+            const row = Math.floor(index / 10);
+            const col = index % 10;
+            let count = 0;
+            
+            for (let r = row - 1; r <= row + 1; r++) {
+                for (let c = col - 1; c <= col + 1; c++) {
+                    if (r >= 0 && r < 10 && c >= 0 && c < 10) {
+                        const adjIndex = r * 10 + c;
+                        if (gameData.mines[adjIndex]) count++;
+                    }
+                }
+            }
+            
+            return count;
+        }
+
+        function initPatternGame() {
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Pattern Recognition</h3>
+                    <p>Complete the visual pattern</p>
+                    <div style="font-size: 4rem; margin: 30px 0;">
+                        ⭐ ⭐⭐ ⭐⭐⭐ ?
+                    </div>
+                    <div class="game-controls">
+                        <button class="btn" onclick="selectPatternAnswer('⭐')">⭐</button>
+                        <button class="btn" onclick="selectPatternAnswer('⭐⭐⭐⭐')">⭐⭐⭐⭐</button>
+                        <button class="btn" onclick="selectPatternAnswer('⭐⭐')">⭐⭐</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectPatternAnswer(answer) {
+            if (answer === '⭐⭐⭐⭐') {
+                gameState.score += 75;
+                alert('Excellent! Correct pattern!');
+                generateNewVisualPattern();
+            } else {
+                alert('Try again! Look for the increasing pattern.');
+            }
+            updateStats();
+        }
+
+        function generateNewVisualPattern() {
+            const patterns = [
+                {question: '🔵 🔵🔵 🔵🔵🔵 ?', answer: '🔵🔵🔵🔵'},
+                {question: '❤️ ❤️❤️ ❤️❤️❤️ ❤️❤️❤️❤️ ?', answer: '❤️❤️❤️❤️❤️'},
+                {question: '🟡 🟡🟢 🟡🟢🔴 ?', answer: '🟡🟢🔴🔵'}
+            ];
+            
+            const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+            const gameBoard = document.getElementById('game-board');
+            
+            gameBoard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>Pattern Recognition</h3>
+                    <p>Complete the visual pattern</p>
+                    <div style="font-size: 3rem; margin: 30px 0;">
+                        ${pattern.question}
+                    </div>
+                    <div class="game-controls">
+                        <button class="btn" onclick="selectPatternAnswer('${pattern.answer}')">${pattern.answer}</button>
+                        <button class="btn" onclick="selectPatternAnswer('wrong1')">Wrong 1</button>
+                        <button class="btn" onclick="selectPatternAnswer('wrong2')">Wrong 2</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function startGame() {
+            if (!currentGame) {
+                alert('Please select a game first!');
+                return;
+            }
+            
+            gameState.isPlaying = true;
+            gameState.isPaused = false;
+            
+            // Start timer
+            gameTimer = setInterval(() => {
+                if (!gameState.isPaused) {
+                    gameState.time++;
+                    updateStats();
+                }
+            }, 1000);
+            
+            // Initialize game-specific logic
+            if (currentGame === 'reflex') {
+                startReflexTest();
+            }
+        }
+
+        function pauseGame() {
+            gameState.isPaused = !gameState.isPaused;
+        }
+
+        function resetGame() {
+            gameState.score = 0;
+            gameState.level = 1;
+            gameState.time = 0;
+            gameState.isPlaying = false;
+            gameState.isPaused = false;
+            
+            if (gameTimer) {
+                clearInterval(gameTimer);
+                gameTimer = null;
+            }
+            
+            updateStats();
+            
+            if (currentGame) {
+                initializeGame(currentGame);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('time').textContent = gameState.time;
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (!gameState.isPlaying || gameState.isPaused) return;
+            
+            if (currentGame === 'snake') {
+                switch(e.key) {
+                    case 'ArrowUp':
+                        if (gameData.direction.y !== 1) gameData.direction = {x: 0, y: -1};
+                        break;
+                    case 'ArrowDown':
+                        if (gameData.direction.y !== -1) gameData.direction = {x: 0, y: 1};
+                        break;
+                    case 'ArrowLeft':
+                        if (gameData.direction.x !== 1) gameData.direction = {x: -1, y: 0};
+                        break;
+                    case 'ArrowRight':
+                        if (gameData.direction.x !== -1) gameData.direction = {x: 1, y: 0};
+                        break;
+                }
+            }
+        });
+
+        // Snake game loop
+        function moveSnake() {
+            if (currentGame !== 'snake' || !gameState.isPlaying || gameState.isPaused) return;
+            
+            const head = {...gameData.snake[0]};
+            head.x += gameData.direction.x;
+            head.y += gameData.direction.y;
+            
+            // Check walls
+            if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) {
+                alert('Game Over! Snake hit the wall!');
+                resetGame();
+                return;
+            }
+            
+            // Check self collision
+            if (gameData.snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                alert('Game Over! Snake hit itself!');
+                resetGame();
+                return;
+            }
+            
+            gameData.snake.unshift(head);
+            
+            // Check food
+            if (head.x === gameData.food.x && head.y === gameData.food.y) {
+                gameState.score += 10;
+                updateStats();
+                // Generate new food
+                do {
+                    gameData.food = {
+                        x: Math.floor(Math.random() * 20),
+                        y: Math.floor(Math.random() * 20)
+                    };
+                } while (gameData.snake.some(segment => segment.x === gameData.food.x && segment.y === gameData.food.y));
+            } else {
+                gameData.snake.pop();
+            }
+            
+            updateSnakeBoard();
+        }
+
+        // Start snake game loop
+        setInterval(moveSnake, 200);
+
+        // Initialize on load
+        updateStats();
+    </script>
+</body>
+</html>
